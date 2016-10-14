@@ -32,8 +32,12 @@ class Reddit(object):
         if (self.isConnected()):
             data = []
             results = self.reddit.get_subreddit(subName).get_hot(limit=lim)
+            x = 0
             for item in results:
-                data.append(DataObject(item.title, item.url, item.comments))
+                if len(item.comments) >= 5:
+                    data.append(DataObject(item.title, item.url, item.comments[:5]))
+                    print x
+                    x += 1
             return data
         return None
 
@@ -47,6 +51,9 @@ if __name__ == "__main__":
     reddit = Reddit("Computation Humor 1.0")
     reddit.connect()
     x = reddit.getSubreddit(args.subreddit, args.count)
-    for post in x:
-        print post.title
-        print "================================================================================"
+    with open(args.subreddit + ".txt", "w") as f:
+        for post in x:
+            print post.title
+            print "================================================================================"
+            comments = [comment.body.strip().replace("\n", " ") for comment in post.comments]
+            f.write(post.title + "," + post.imgurl + "," + ",".join(comments) + "\n")

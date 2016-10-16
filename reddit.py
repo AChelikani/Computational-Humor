@@ -55,5 +55,5 @@ if __name__ == "__main__":
         for post in x:
             print post.title
             print "================================================================================"
-            comments = [comment.body.strip().replace("\n", " ") for comment in post.comments]
-            f.write(post.title + "," + post.imgurl + "," + ",".join(comments) + "\n")
+            comments = [comment.body.strip().replace("\n", " ").encode('utf-8') for comment in post.comments]
+            f.write(post.title.encode('utf-8') + "," + post.imgurl.encode('utf-8') + "," + ",".join(comments) + "\n")

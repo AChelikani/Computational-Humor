@@ -4,11 +4,13 @@ Using machine learning to deliver funny captions for pictures.
 ## Installation
 Run `pip install praw`
 
-## Clarifai API Setup
-Make an account on Clarifai, get an access token then run:
+## Setup
+Make a local file called `config.py` with the following:
 
-```curl "https://api.clarifai.com/v1/tag/?model=general-v1.3&url={img url}" \
-  -H "Authorization: Bearer {access token}"```
+```python
+CLARIFAI_AUTH = {access token}
+WORD_AUTH = {words.bighugelabs.com token}
+```
 
 ## Execution
 Run `python reddit.py`

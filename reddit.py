@@ -1,5 +1,6 @@
 import argparse
 import praw
+from collections import deque
 
 # Class for data object
 '''
@@ -34,8 +35,16 @@ class Reddit(object):
             results = self.reddit.get_subreddit(subName).get_hot(limit=lim)
             x = 0
             for item in results:
-                if len(item.comments) >= 5:
-                    data.append(DataObject(item.title, item.url, item.comments[:5]))
+                comments = deque()
+                comments.extend(item.comments)
+                topComments = []
+                while len(topComments) < 5 and len(comments) > 0:
+                    comment = comments.popleft()
+                    if type(comment) is praw.objects.Comment:
+                        topComments.append(comment)
+                        comments.extend(comment.replies)
+                if len(topComments) >= 5:
+                    data.append(DataObject(item.title, item.url, topComments[:5]))
                     print x
                     x += 1
             return data

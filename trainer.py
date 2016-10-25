@@ -43,15 +43,12 @@ class Trainer(object):
                 return response[key]["syn"]
         return []
 
-    '''
-    # This API is ass
     def getSimilarity(self, word1, word2):
-        url = "https://api.dandelion.eu/datatxt/sim/v1/?text1=" + word1 + "&text2=" + word2 + "&token="+ config.SIM_AUTH
+        url = "http://swoogle.umbc.edu/SimService/GetSimilarity?operation=api&phrase1=" + word1 + "&phrase2=" + word2
         response = requests.get(url).json()
         return response
-    '''
 
 if __name__ == "__main__":
     trainer = Trainer()
     print trainer.getSimilarity("My delicious salad from a Domino's pizza in Sarasota (refund denied).", "salad")
-    #trainer.getSynonyms("help")
+    print trainer.getSynonyms("help")

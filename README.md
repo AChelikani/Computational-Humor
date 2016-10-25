@@ -10,6 +10,7 @@ Make a local file called `config.py` with the following:
 ```python
 CLARIFAI_AUTH = {access token}
 WORD_AUTH = {words.bighugelabs.com token}
+SIM_AUTH = {https://dandelion.eu token}
 ```
 
 ## Execution

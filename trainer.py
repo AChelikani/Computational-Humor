@@ -1,10 +1,11 @@
 import requests
 import config
 import words
+import nltk
 
 class Trainer(object):
     def __init__(self):
-        pass
+        self.entries = nltk.corpus.cmudict.entries()
 
     # Need word semantic similarity API for this
     def freqCounts(self):
@@ -48,7 +49,28 @@ class Trainer(object):
         response = requests.get(url).json()
         return response
 
+    # Gets a list of rhyming words for a word
+    def getRhymingWords(self, word):
+        # Gets syllables of word.
+        for entry, syllables in self.entries:
+            if entry == word:
+                break
+
+        # Checks last syllable of all candidate words in dictionary.
+        rhymes = [cand for cand, cand_syl in self.entries if syllables[-1] == cand_syl[-1]]
+        return rhymes
+
+    # Gets a list of rhyming synonyms for a word
+    def getRhymingSynonyms(self, word):
+        syns = set(self.getSynonyms(word))
+        rhymes = set(self.getRhymingWords(word))
+
+        return syns.intersection(rhymes)
+
+
+
 if __name__ == "__main__":
     trainer = Trainer()
-    print trainer.getSimilarity("My delicious salad from a Domino's pizza in Sarasota (refund denied).", "salad")
-    print trainer.getSynonyms("help")
+    #print trainer.getSimilarity("My delicious salad from a Domino's pizza in Sarasota (refund denied).", "salad")
+    #print trainer.getSynonyms("help")
+    print trainer.getRhymingSynonyms("waiter")

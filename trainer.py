@@ -73,4 +73,19 @@ if __name__ == "__main__":
     trainer = Trainer()
     #print trainer.getSimilarity("My delicious salad from a Domino's pizza in Sarasota (refund denied).", "salad")
     #print trainer.getSynonyms("help")
-    print trainer.getRhymingSynonyms("waiter")
+    #print trainer.getRhymingSynonyms("waiter")
+
+    comments = ['riceerroni',
+                'Pepperoni 7/10\nPepperoni with rice 8/10',
+                'Just needs that Sriracha squirt to bring it home.',
+                'At first I read this as precipice. And I kept thinking "precipice of what?" Misery, surely.',
+                'So your a college student, huh?']
+    comments = [word.split() for word in comments]
+    syns = [u'rice', u'food', u'no person', u'lunch', u'dinner', u'traditional', u'delicious', u'meal', u'nutrition', u'meat', u'chicken', u'cooking', u'dish', u'grow', u'pork', u'bowl', u'mouth-watering', u'plate', u'still life', u'vegetable']
+    clean_comments = trainer.cleanComments(comments, syns)
+
+    rhyme_syns = []
+
+    for comment in clean_comments:
+        for word in comment:
+            rhyme_syns.extend(trainer.getRhymingSynonyms(word))

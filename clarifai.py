@@ -1,5 +1,6 @@
 import requests
 import config
+import sys
 
 class Clarifai(object):
     def __init__(self, authToken):
@@ -16,5 +17,6 @@ class Clarifai(object):
 
 if __name__ == "__main__":
     clarifai = Clarifai(config.CLARIFAI_AUTH)
-    url = "https://api.clarifai.com/v1/tag/?url=https://samples.clarifai.com/metro-north.jpg"
+    img_url = sys.argv[1]
+    url = "https://api.clarifai.com/v1/tag/?url=" + img_url
     print clarifai.makeRequest(url)

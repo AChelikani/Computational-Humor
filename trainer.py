@@ -51,6 +51,18 @@ class Trainer(object):
         except:
             return []
         return []
+    
+    def getSynonymsList(self, word, level):
+        allSynonyms = [word]
+        curSynonyms = [word]
+        for i in range(0, level):
+            for w in curSynonyms:
+                synonyms = self.getSynonyms(w)
+                allSynonyms.extend(synonyms)
+                curSynonyms = synonyms
+        return allSynonyms
+                
+
 
     def getSimilarity(self, word1, word2):
         url = "http://swoogle.umbc.edu/SimService/GetSimilarity?operation=api&phrase1=" + word1 + "&phrase2=" + word2
@@ -77,8 +89,8 @@ class Trainer(object):
         return rhymes
 
     # Gets a list of rhyming synonyms for a word
-    def getRhymingSynonyms(self, word):
-        syns = set(self.getSynonyms(word))
+    def getRhymingSynonyms(self, word, level):
+        syns = set(self.getSynonymsList(word, level))
         rhymes = set(self.getRhyming(word))
         return list(syns.intersection(rhymes))
 
@@ -90,7 +102,7 @@ class Trainer(object):
         res = []
         for comment in clean_comments:
             for word in comment:
-                res.append((word, self.getRhymingSynonyms(word)))
+                res.append((word, self.getRhymingSynonyms(word, 2)))
         return res
 
 

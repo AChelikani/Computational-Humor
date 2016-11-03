@@ -55,11 +55,14 @@ class Trainer(object):
     def getSynonymsList(self, word, level):
         allSynonyms = [word]
         curSynonyms = [word]
+        nextWords = []
         for i in range(0, level):
             for w in curSynonyms:
                 synonyms = self.getSynonyms(w)
                 allSynonyms.extend(synonyms)
-                curSynonyms = synonyms
+                nextWords.extend(synonyms)
+            curSynonyms = nextWords
+            nextWords = []
         return allSynonyms
                 
 

@@ -5,6 +5,7 @@ import nltk
 import clarifai
 import reddit
 import re
+from insultingwords import INSULTING_WORDS
 
 class Trainer(object):
     def __init__(self):
@@ -144,6 +145,8 @@ class Trainer(object):
         tags = self.clarifai.makeRequest(imgUrl)
         synTags = self.populateSynonyms(tags)
         funny = self.populateFunny(comments, synTags)
+        insulting = set(INSULTING_WORDS)
+        funny.union(insulting)
         synFunny = self.populateSynonyms(funny)
         print "##############################"
         print funny

@@ -146,19 +146,63 @@ class Trainer(object):
         funny = self.populateFunny(comments, synTags)
         synFunny = self.populateSynonyms(funny)
         print "##############################"
+        print funny
+        print "##############################"
         print synFunny
-
-        rhymeSynFunny = self.populateRhyming(synFunny)
-        result = rhymeSynFunny.intersection(synTags)
         print "##############################"
-        print rhymeSynFunny
-        print "##############################"
-        print result
 
-        return synFunny, result
+        # rhymeSynFunny = self.populateRhyming(synFunny)
+        # result = rhymeSynFunny.intersection(synTags)
+        # print "##############################"
+        # print rhymeSynFunny
+        # print "##############################"
+        # print result
+
+        # return synFunny, result
+
+        best_phrase = ""
+        best_score = 0
+
+        for funnyWord in synFunny:
+            rhymeSynFunny = self.populateRhyming([funnyWord])
+            result = rhymeSynFunny.intersection(synTags)
+
+            for resultWord in result:
+                score = 0
+                for tag in tags:
+                    # score += self.getSimilarity(funnyWord, resultWord) \
+                    #          * self.getSimilarity(tag, funnyWord)
+                    tagScore = self.getSimilarity(tag, funnyWord) \
+                               + self.getSimilarity(tag, resultWord)
+                    if tagScore > 0:
+                        score += tagScore
+
+                print funnyWord, resultWord
+                print score
+
+                if score > best_score:
+                    best_phrase = "%s %s" % (funnyWord, resultWord)
+                    best_score = score
+
+        return best_phrase
+
+    # Rhyming of synonyms of funny intersects with synonyms of tags
+    def run3(self, postID):
+        comments, imgUrl, votes = self.reddit.getCommentsById(postID)
+
+        tags = self.clarifai.makeRequest(imgUrl)
+        synTags = self.populateSynonyms(tags)
+
+        for syn in synTags:
+            rhymeSynTags = self.populateRhyming([syn])
+            result = rhymeSynTags.intersection(synTags)
+
+            for resultWord in result:
+                print syn, resultWord
+                print self.getSimilarity(syn, resultWord)
 
 
 
 if __name__ == "__main__":
     trainer = Trainer()
-    trainer.run2("5a60vf")
+    trainer.run2("4aozus")

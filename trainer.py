@@ -13,8 +13,14 @@ class Trainer(object):
         self.reddit = reddit.Reddit("Computation Humor 1.0")
         self.reddit.connect()
 
-    # Given an array of comments (as nested list), word synonyms from the tags
-    # Gives all the funny words (i.e. comments - tags)
+
+
+    # Populates funny words, i.e. comments - tags, using cleanComments
+    def populateFunny(self, comments, syns):
+        return set(self.cleanComments(comments, syns))
+
+    # Given an array of comments (as a nested list) and synonyms from the tags
+    # Gives all the funny words (i.e. comments - tags) as a single unnested list
     def cleanComments(self, comments, syns):
         regex = re.compile('[^a-zA-Z\s\']')
         funny = []
@@ -27,14 +33,9 @@ class Trainer(object):
                 word = comment[y]
                 if word not in syns and word not in words.COMMON_WORDS:
                     tmp.append(word)
-            funny.append(tmp)
+            funny.extend(tmp)
         return funny
 
-    def flattenComments(self, cleaned):
-        res = []
-        for comment in cleaned:
-            res.extend(comment)
-        return set(res)
 
 
     # Given a set of words, returns a set of words + synonyms
@@ -59,6 +60,7 @@ class Trainer(object):
             return []
         return []
 
+    # Gets a list of synonyms until a certain depth
     def getSynonymsList(self, word, level):
         allSynonyms = [word]
         curSynonyms = [word]
@@ -72,12 +74,30 @@ class Trainer(object):
             nextWords = []
         return allSynonyms
 
-
-
+    # Calculates the similarity between two words
     def getSimilarity(self, word1, word2):
         url = "http://swoogle.umbc.edu/SimService/GetSimilarity?operation=api&phrase1=" + word1 + "&phrase2=" + word2
         response = requests.get(url).json()
         return response
+
+
+
+    # Given a set of words, returns a set of rhyming words
+    def populateRhyming(self, arr):
+        res = []
+        for word in arr:
+            res.extend(self.getRhyming(word))
+        return set(res)
+
+    # Get rhyming words
+    def getRhyming(self, word):
+        rhymes = []
+        response = requests.get("http://rhymebrain.com/talk?function=getRhymes&word=" + word).json()
+        for word in response:
+            score = int(word["score"])
+            if (score == 300):
+                rhymes.append(word["word"])
+        return rhymes
 
     # Gets a list of rhyming words for a word
     def getRhymingWords(self, word):
@@ -90,21 +110,7 @@ class Trainer(object):
         rhymes = [cand for cand, cand_syl in self.entries if syllables[-1] == cand_syl[-1]]
         return rhymes
 
-    # Get rhyming words
-    def getRhyming(self, word):
-        rhymes = []
-        response = requests.get("http://rhymebrain.com/talk?function=getRhymes&word=" + word).json()
-        for word in response:
-            score = int(word["score"])
-            if (score == 300):
-                rhymes.append(word["word"])
-        return rhymes
 
-    def populateRhyming(self, arr):
-        res = []
-        for word in arr:
-            res.extend(self.getRhyming(word))
-        return res
 
     # Gets a list of rhyming synonyms for a word
     def getRhymingSynonyms(self, word, level):
@@ -112,34 +118,47 @@ class Trainer(object):
         rhymes = set(self.getRhyming(word))
         return list(syns.intersection(rhymes))
 
-    def getIntersection(self, set1, set2):
-        return list(set1.intersection(set2))
 
-    # Main method
-    def run(self, postID):
+
+    ### Main run functions
+
+    # Funny intersects with rhyming
+    def run1(self, postID):
         comments, imgUrl, votes = self.reddit.getCommentsById(postID)
+
         tags = self.clarifai.makeRequest(imgUrl)
-        print tags
-        print "####################"
         synTags = self.populateSynonyms(tags)
-        print synTags
-        print "####################"
-        cleaned = self.flattenComments(self.cleanComments(comments, synTags))
-        print cleaned
-        print "####################"
-        synFunny = cleaned
-        print synFunny
-        print "####################"
-        for word in synFunny:
+        funny = self.cleanComments(comments, synTags)
+
+        for word in funny:
             tmp = self.getRhyming(word)
             for rhymingWord in tmp:
                 if rhymingWord in synTags:
                     print word, rhymingWord
-        return synFunny
+        return funny
+
+    # Rhyming of synonyms of funny intersects with synonyms of tags
+    def run2(self, postID):
+        comments, imgUrl, votes = self.reddit.getCommentsById(postID)
+
+        tags = self.clarifai.makeRequest(imgUrl)
+        synTags = self.populateSynonyms(tags)
+        funny = self.populateFunny(comments, synTags)
+        synFunny = self.populateSynonyms(funny)
+        print "##############################"
+        print synFunny
+
+        rhymeSynFunny = self.populateRhyming(synFunny)
+        result = rhymeSynFunny.intersection(synTags)
+        print "##############################"
+        print rhymeSynFunny
+        print "##############################"
+        print result
+
+        return synFunny, result
 
 
 
 if __name__ == "__main__":
     trainer = Trainer()
-    trainer.run("5ao9jw")
-    #print trainer.getRhyming("")
+    trainer.run2("5a60vf")

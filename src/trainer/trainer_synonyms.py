@@ -44,7 +44,7 @@ def populateSynonyms(words):
     for word in words:
         syns.add(word)
         resp = getSynonyms(word)
-        syns.union(resp)
+        syns = syns.union(resp)
 
     return syns
 

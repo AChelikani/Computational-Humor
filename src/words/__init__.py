@@ -1,0 +1,2 @@
+from insulting_words import INSULTING_WORDS
+from common_words import COMMON_WORDS

@@ -11,9 +11,13 @@ class Trainer(object):
     '''
     Main trainer class that outputs a comment given a post.
     '''
-    from trainer import populateFunny, populateSynonyms, populateRhyme
 
     def __init__(self):
+        from trainer import populateFunny, populateSynonyms, populateRhyme
+        self.populateFunny = populateFunny
+        self.populateSynonyms = populateSynonyms
+        self.populateRhyme = populateRhyme
+
         self.clarifai = clarifai.Clarifai(config.CLARIFAI_AUTH)
         self.reddit = reddit.Reddit("Computation Humor 1.0")
         self.reddit.connect()

@@ -55,7 +55,7 @@ class Reddit(object):
             imgUrl = submission.url
             tmp = []
             tmpVotes = []
-            flat_comments = self.flatten_comments(submission.comments)
+            flat_comments = self.flattenComments(submission.comments)
 
             for comment in flat_comments:
                 if hasattr(comment, 'body') and hasattr(comment, 'score'):

@@ -34,7 +34,7 @@ class Trainer(object):
         tags = self.clarifai.makeRequest(imgUrl)
         synTags = self.populateSynonyms(tags)
         funny = self.populateFunny(comments, synTags).union(words.INSULTING_WORDS)
-        synFunny = self.populateSynonyms(funny)
+        synFunny = self.populateSynonyms(funny, syn=True)
 
         best_score = 0
 

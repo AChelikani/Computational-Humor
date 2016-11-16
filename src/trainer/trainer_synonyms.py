@@ -2,7 +2,7 @@ import requests
 import config
 
 
-def getSynonyms(word):
+def getSynonyms(word, syn=True):
     '''
     Finds a list of synonyms for a word.
     '''
@@ -12,7 +12,10 @@ def getSynonyms(word):
         response = requests.get(url).json()
         for key in response:
             if (key == "noun"):
-                return response[key]["syn"]
+                if syn:
+                    return response[key]["syn"]
+                else:
+                    return response[key]["ant"]
     except Exception:
         pass
 
@@ -36,14 +39,15 @@ def getSynonymsList(word, level):
 
     return allSynonyms
 
-def populateSynonyms(words):
+def populateSynonyms(words, syn=True):
     '''
     Given a list or set of words, returns a set of the words and their synonyms.
     '''
     syns = set([])
     for word in words:
-        syns.add(word)
-        resp = getSynonyms(word)
+        if syn:
+            syns.add(word)
+        resp = getSynonyms(word, syn)
         syns = syns.union(resp)
 
     return syns

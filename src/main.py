@@ -63,4 +63,5 @@ class Trainer(object):
 
 if __name__ == "__main__":
     trainer = Trainer()
-    print trainer.run("4aozus")
+    #print trainer.run("4aozus")
+    print trainer.run("4qxqnq")

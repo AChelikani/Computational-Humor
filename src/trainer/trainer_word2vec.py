@@ -3,7 +3,7 @@ import gensim
 model = gensim.models.Word2Vec.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
 
 class Relation:
-    def __init__(self, pos, neg):
+    def __init__(self, pos, neg=[]):
         self.pos = pos
         self.neg = neg
 
@@ -11,18 +11,28 @@ class Relation:
         return model.most_similar(positive=self.pos, negative=self.neg)
 
     def __str__(self):
-        x = '+'.join(self.pos)
+        x = ' + '.join(self.pos)
         if len(self.neg) > 0:
-            x += '-' + '-'.join(self.neg)
+            x += ' - ' + ' - '.join(self.neg)
         return x
 
     def __add__(self, other):
-        self.pos.append(other.word)
-        return Relation(self.pos, self.neg)
+        if isinstance(other, Word):
+            self.pos.append(other.word)
+            return Relation(self.pos, self.neg)
+        else:
+            self.pos.extend(other.pos)
+            self.neg.extend(other.neg)
+            return Relation(self.pos, self.neg)
 
     def __sub__(self, other):
-        self.neg.append(other.word)
-        return Relation(self.pos, self.neg)
+        if isinstance(other, Word):   
+            self.neg.append(other.word)
+            return Relation(self.pos, self.neg)
+        else:
+            self.pos.extend(other.neg)
+            self.neg.extend(other.pos)
+            return Relation(self.pos, self.neg)
 
 
 class Word:

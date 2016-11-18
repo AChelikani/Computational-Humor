@@ -41,6 +41,11 @@ class Reddit(object):
         '''
         return praw.helpers.flatten_tree(comments)
 
+    def getPostTitleById(self, postID):
+        if (self.isConnected()):
+            submission = self.reddit.get_submission(submission_id=postID)
+            return submission.title
+
     def getCommentsById(self, postID):
         '''
         Gets comments from a specific post by its ID.

@@ -2,10 +2,11 @@
 import sys
 sys.dont_write_bytecode = True
 
+import re
 import config
 import words
 from wrappers import clarifai, reddit
-from trainer import populateFunny, populateSynonyms, populateRhyme, getSimilarity
+from trainer import populateFunny, populateSynonyms, populateRhyme, getSimilarity, getHomophones
 
 
 class Trainer(object):
@@ -18,6 +19,7 @@ class Trainer(object):
         self.populateSynonyms = populateSynonyms
         self.populateRhyme = populateRhyme
         self.getSimilarity = getSimilarity
+        self.getHomophones = getHomophones
 
         self.clarifai = clarifai.Clarifai(config.CLARIFAI_AUTH)
         self.reddit = reddit.Reddit("Computation Humor 1.0")
@@ -60,8 +62,41 @@ class Trainer(object):
 
         return "What is this, %s %s?" % best_phrase
 
+    def run_homophones(self, postID):
+        comments, imgUrl, votes = self.reddit.getCommentsById(postID)
+        title = self.reddit.getPostTitleById(postID)
+
+        tags = self.clarifai.makeRequest(imgUrl)
+        print "Tags: done \n"
+        regex = re.compile('[^a-zA-Z\s\']')
+        title = title.lower()
+        title = regex.sub('', title)
+        title = title.split(" ")
+        print "Title: done \n"
+
+
+        for word in tags:
+            hphones = self.getHomophones(word)
+            for homophone in hphones:
+                for title_word in title:
+                    hphone, hscore = homophone
+                    score = self.getSimilarity(hphone, title_word)
+                    if (score > 0):
+                        print "%s %s \t score: %f" % (hphone, title_word, score)
+
+        for word in title:
+            hphones = self.getHomophones(word)
+            for homophone in hphones:
+                for title_word in tags:
+                    hphone, hscore = homophone
+                    score = self.getSimilarity(hphone, title_word)
+                    if (score > 0):
+                        print "%s %s \t score: %f" % (hphone, title_word, score)
+
+
 
 if __name__ == "__main__":
     trainer = Trainer()
     #print trainer.run("4aozus")
-    print trainer.run("4qxqnq")
+    #print trainer.run("4qxqnq")
+    print trainer.run_homophones("4qxqnq")

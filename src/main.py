@@ -75,6 +75,7 @@ class Trainer(object):
         title = title.split(" ")
         print "Title: done \n"
 
+        res = []
 
         for word in tags:
             hphones = self.getHomophones(word)
@@ -84,6 +85,7 @@ class Trainer(object):
                     score = self.getSimilarity(hphone, title_word)
                     if (score > 0):
                         print "%s %s \t score: %f" % (hphone, title_word, score)
+                        res.append((score, hphone, title_word))
 
         for word in title:
             hphones = self.getHomophones(word)
@@ -93,24 +95,33 @@ class Trainer(object):
                     score = self.getSimilarity(hphone, title_word)
                     if (score > 0):
                         print "%s %s \t score: %f" % (hphone, title_word, score)
+                        res.append((score, hphone, title_word))
 
-    def run_references(self, postID):
+        return sorted(res, reverse=True)
+
+    def run_references(self, postID, metric="edit"):
         '''
         Replaces words with references.
         '''
         comments, imgUrl, votes = self.reddit.getCommentsById(postID)
-    
+
         tags = self.clarifai.makeRequest(imgUrl)
         synTags = self.populateSynonyms(tags)
 
         for tag in synTags:
             for phrase in words.REFERENCE_WORDS:
-                for word in phrase.split():
+                reference = phrase.split()
+                for i in range(len(reference)):
+                    word = reference[i]
                     ### TODO: smaller numbers / use as parameters
-                    if editDistance(tag, word) <= 5:
-                        print "E\ttag, word"
-                    elif soundexDistance(tag, word) <= 2:
-                        print "S\ttag, word"
+                    if metric == "edit" and editDistance(tag, word) <= 2:
+                        reference[i] = tag
+                        print "E\t%s" % ' '.join(reference)
+                        reference[i] = word
+                    elif metric == "soundex" and soundexDistance(tag, word) <= 0:
+                        reference[i] = tag
+                        print "S\t%s" % ' '.join(reference)
+                        reference[i] = word
 
         # funny = self.populateFunny(comments, synTags).union(words.INSULTING_WORDS)
         # synFunny = self.populateSynonyms(funny, syn=True)
@@ -143,4 +154,8 @@ if __name__ == "__main__":
     trainer = Trainer()
     #print trainer.run_synRhyme("4aozus")
     #print trainer.run_synRhyme("4qxqnq")
-    print trainer.run_references("4qxqnq")
+    trainer.run_references("5ejq1p", metric="soundex")
+    # res = trainer.run_homophones("5ejq1p")
+    # print "-----ordered------"
+    # for item in res:
+    #     print item

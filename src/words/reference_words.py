@@ -84,4 +84,6 @@ REFERENCE_WORDS = set([
     "Pixar",
     "Instggram",
     "Snapchat"
+
+    # TODO: add expressions/idioms
 ])

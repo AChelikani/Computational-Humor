@@ -82,22 +82,22 @@ class Trainer(object):
             for homophone in hphones:
                 for title_word in title:
                     hphone, hscore = homophone
-                    score = self.getSimilarity(hphone, title_word)
+                    score = self.getSimilarity(hphone, title_word) + hscore/17800.0
                     if (score > 0):
-                        print "%s %s \t score: %f" % (hphone, title_word, score)
-                        res.append((score, hphone, title_word))
+                        #print "%s %s \t score: %f, %f" % (hphone, title_word, score, hscore)
+                        res.append((score, hphone + " " + title_word))
 
         for word in title:
             hphones = self.getHomophones(word)
             for homophone in hphones:
                 for title_word in tags:
                     hphone, hscore = homophone
-                    score = self.getSimilarity(hphone, title_word)
+                    score = self.getSimilarity(hphone, title_word) + hscore/17800.0
                     if (score > 0):
-                        print "%s %s \t score: %f" % (hphone, title_word, score)
-                        res.append((score, hphone, title_word))
+                        #print "%s %s \t score: %f, %f" % (hphone, title_word, score, hscore)
+                        res.append((score, hphone + " " + title_word))
 
-        return sorted(res, reverse=True)
+        return sorted(res, reverse=True)[0][1]
 
     def run_references(self, postID, metric="edit"):
         '''
@@ -154,8 +154,10 @@ if __name__ == "__main__":
     trainer = Trainer()
     #print trainer.run_synRhyme("4aozus")
     #print trainer.run_synRhyme("4qxqnq")
-    trainer.run_references("5ejq1p", metric="soundex")
-    # res = trainer.run_homophones("5ejq1p")
+    #trainer.run_references("5ejq1p", metric="soundex")
+    #res = trainer.run_homophones("5f62i1")
+    res = trainer.run_homophones("5f7g0l")
+    print res
     # print "-----ordered------"
     # for item in res:
     #     print item

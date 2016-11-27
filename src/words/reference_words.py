@@ -40,6 +40,11 @@ REFERENCE_WORDS = set([
     "Batman",
     "Voldemort",
     "Kevin McCallister",
+    "James T. Kirk",
+    "Spock",
+    "Aang",
+    "Sokka",
+    "Sheldon Cooper",
 
     # Popular movies
     "Spider-Man",

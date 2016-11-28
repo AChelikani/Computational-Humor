@@ -51,6 +51,7 @@ REFERENCE_WORDS = set([
     "Aang",
     "Sokka",
     "Sheldon Cooper",
+    "Scooby Doo",
 
     # Popular movies
     "Spider-Man",

@@ -128,7 +128,7 @@ REFERENCE_WORDS = set([
     "There's no place like home",
     "The first rule of Fight Club is: You do not talk about Fight Club",
     "I am your father",
-    "Hello. My name is Inigo Montoya. You killed my father. Prepare to die."
+    "Hello. My name is Inigo Montoya. You killed my father. Prepare to die.",
     "Why so serious?",
     "Houston, we have a problem.",
     "To infinity and beyond!",

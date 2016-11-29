@@ -26,34 +26,23 @@ REFERENCE_WORDS = set([
     "Rafael Nadal",
     "Babe Ruth",
 
-
     # Famous groups
     "The Beatles",
     "Pink Floyd",
     "One Direction",
     "The Black Eyed Peas",
-    "Queen",
     "Red Hot Chili Peppers",
 
     # Famous characters
     "Mickey Mouse",
     "Donkey Kong",
-    "Mario",
-    "Pikachu",
     "Robin Hood",
     "Frankenstein",
-    "Superman",
-    "Batman",
-    "Voldemort",
     "Kevin McCallister",
     "James T. Kirk",
-    "Spock",
-    "Aang",
-    "Sokka",
     "Sheldon Cooper",
 
     # Popular movies
-    "Spider-Man",
     "Harry Potter",
     "The Wizard of Oz",
     "Finding Nemo",
@@ -62,11 +51,8 @@ REFERENCE_WORDS = set([
     "Toy Story",
     "Inside Out",
     "King Kong",
-    "Up",
-
     "12 Angry Men",
     "The Terminator",
-    "Aliens",
     "The Shawshank Redemption",
     "The Dark Knight",
     "Pulp Fiction",
@@ -78,28 +64,14 @@ REFERENCE_WORDS = set([
     "Game of Thrones",
     "Stranger Things",
     "The Big Bang Theory",
-    "Seinfeld",
-    "Friends",
-    "Sherlock",
     "The Office",
 
     # Popular games
     "Call of Duty",
-    "StarCraft",
-    "Civilization",
-    "Bejeweled",
     "Angry Birds",
     "League of Legends",
     "Word of Warcraft",
     "Super Smash Bros Melee",
-
-
-    # Miscellaneous
-    "Netflix",
-    "Facebook",
-    "Pixar",
-    "Instggram",
-    "Snapchat",
 
     # Idioms
     "Actions speak louder than words",
@@ -128,7 +100,7 @@ REFERENCE_WORDS = set([
     "There's no place like home",
     "The first rule of Fight Club is: You do not talk about Fight Club",
     "I am your father",
-    "Hello. My name is Inigo Montoya. You killed my father. Prepare to die."
+    "Hello. My name is Inigo Montoya. You killed my father. Prepare to die.",
     "Why so serious?",
     "Houston, we have a problem.",
     "To infinity and beyond!"

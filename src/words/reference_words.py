@@ -41,6 +41,7 @@ REFERENCE_WORDS = set([
     "Kevin McCallister",
     "James T. Kirk",
     "Sheldon Cooper",
+    "Scooby Doo",
 
     # Popular movies
     "Harry Potter",
@@ -103,5 +104,11 @@ REFERENCE_WORDS = set([
     "Hello. My name is Inigo Montoya. You killed my father. Prepare to die.",
     "Why so serious?",
     "Houston, we have a problem.",
-    "To infinity and beyond!"
+    "To infinity and beyond!",
+    "Live long and prosper.",
+    "Resistance is futile.",
+    "The line must be drawn here! This far, no further!",
+    "I'm sorry, Dave. I'm afraid I can't do that.",
+    "The needs of the many outweigh the needs of the few or the one."
+
 ])

@@ -106,43 +106,50 @@ class Trainer(object):
         comments, imgUrl, votes = self.reddit.getCommentsById(postID)
 
         tags = self.clarifai.makeRequest(imgUrl)
-        synTags = self.populateSynonyms(tags)
+        synTags = self.populateSynonyms(tags) - words.COMMON_WORDS
+        funny = self.populateFunny(comments, synTags).union(words.INSULTING_WORDS)
+        synFunny = self.populateSynonyms(funny)
+        synAll = synTags.union(synFunny)
 
-        for tag in synTags:
+        best_phrases = []
+        for rep in synTags:
             for phrase in words.REFERENCE_WORDS:
                 reference = phrase.split()
-                tag = tag.lower()
+                rep = rep.lower()
 
-                if tag not in words.COMMON_WORDS:
-                    # For each reference, check whether a tag can replace a
-                    # word in the reference.
-                    for i in range(len(reference)):
-                        word = reference[i]
-                        tag_mod = tag
+                # For each reference, check whether rep can replace a word in
+                # the reference.
+                for i in range(len(reference)):
+                    word = reference[i]
+                    rep_mod = rep
 
-                        # Check that the word and the tag are not the same,
-                        # and that the word is not a common word.
-                        if word not in words.COMMON_WORDS and tag_mod != word.lower():
-                            # Capitalizes tag.
-                            if word.istitle():
-                                tag_mod = tag_mod.title()
-                            # Adds punctuation.
-                            if not word[-1].isalpha():
-                                tag_mod += word[-1]
+                    # Check that word and rep are not the same, and that word
+                    # is not a common word.
+                    if word not in words.COMMON_WORDS and rep_mod != word.lower():
+                        # Capitalizes rep.
+                        if word.istitle():
+                            rep_mod = rep_mod.title()
+                        # Adds punctuation.
+                        if not word[-1].isalpha():
+                            rep_mod += word[-1]
 
-                            # Use a metric as a measure of "closeness" to
-                            # replace a word in a reference.
+                        # Use a metric as a measure of "closeness" to replace
+                        # a word in a reference.
 
-                            # Edit distance
-                            if metric == "edit" and editDistance(tag_mod, word) <= param:
-                                reference[i] = tag_mod
-                                print "\t%s" % ' '.join(reference)
-                                reference[i] = word
-                            # Soundex distance
-                            elif metric == "soundex" and soundexDistance(tag_mod, word) <= param:
-                                reference[i] = tag_mod
-                                print "\t%s" % ' '.join(reference)
-                                reference[i] = word
+                        if (metric == "edit" and editDistance(rep_mod, word) <= param) \
+                        or (metric == "soundex" and soundexDistance(rep_mod, word) <= param):
+                            score = 0
+                            ### TODO: Use this for scoring
+                            # for tag in tags:
+                            #     score += self.getSimilarity(rep, tag)
+
+                            reference[i] = rep_mod
+                            best_phrases.append((score, ' '.join(reference)))
+                            reference[i] = word
+
+        best_phrases.sort(key=lambda phrase: phrase[0], reverse=True)
+        for phrase in best_phrases:
+            print "%f\t%s" % phrase
 
 
 if __name__ == "__main__":
@@ -153,7 +160,14 @@ if __name__ == "__main__":
     # Optimal parameters found by experimentation
     for m, p in [("edit", 1), ("soundex", 0)]:
         print "Metric: %s-%d" % (m, p)
+        # trainer.run_references("5f7g0l", metric=m, param=p)
+        # trainer.run_references("4aozus", metric=m, param=p)
+        # trainer.run_references("4qxqnq", metric=m, param=p)
+        # trainer.run_references("5f62i1", metric=m, param=p)
         trainer.run_references("5f7g0l", metric=m, param=p)
+        # trainer.run_references("5fbr5s", metric=m, param=p)
+        # trainer.run_references("5fbigs", metric=m, param=p)
+        # trainer.run_references("5fdi09", metric=m, param=p)
         print
 
     #res = trainer.run_homophones("5f62i1")

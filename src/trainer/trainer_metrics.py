@@ -77,5 +77,3 @@ def soundexDistance(str1, str2):
     Finds the edit distance of the Soundex codes of two strings.
     '''
     return editDistance(__soundex(str1), __soundex(str2))
-
-### Meaning metric (getSimilarity)

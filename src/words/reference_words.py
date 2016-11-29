@@ -90,17 +90,17 @@ REFERENCE_WORDS = set([
     "Bite off more than you can chew",
 
     # Famous Movie Quotes
-    "Frankly, my dear, I don't give a damn",
-    "Here's looking at you, kid",
-    "You're gonna need a bigger boat",
-    "May the Force be with you",
-    "Toto, I've a feeling we're not in Kansas anymore",
-    "I'm going to make him an offer he can't refuse",
-    "Of all the gin joints in all the towns in all the world, she walks into mine",
+    "Frankly, my dear, I don't give a damn.",
+    "Here's looking at you, kid.",
+    "You're gonna need a bigger boat.",
+    "May the Force be with you.",
+    "Toto, I've a feeling we're not in Kansas anymore.",
+    "I'm going to make him an offer he can't refuse.",
+    "Of all the gin joints in all the towns in all the world, she walks into mine.",
     "You talkin' to me?",
     "There's no place like home",
-    "The first rule of Fight Club is: You do not talk about Fight Club",
-    "I am your father",
+    "The first rule of Fight Club is: You do not talk about Fight Club.",
+    "I am your father.",
     "Hello. My name is Inigo Montoya. You killed my father. Prepare to die.",
     "Why so serious?",
     "Houston, we have a problem.",
@@ -110,5 +110,4 @@ REFERENCE_WORDS = set([
     "The line must be drawn here! This far, no further!",
     "I'm sorry, Dave. I'm afraid I can't do that.",
     "The needs of the many outweigh the needs of the few or the one."
-
 ])

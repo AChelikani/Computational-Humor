@@ -138,18 +138,29 @@ class Trainer(object):
 
                         if (metric == "edit" and editDistance(rep_mod, word) <= param) \
                         or (metric == "soundex" and soundexDistance(rep_mod, word) <= param):
-                            score = 0
                             ### TODO: Use this for scoring
+                            # score = 0
                             # for tag in tags:
                             #     score += self.getSimilarity(rep, tag)
 
                             reference[i] = rep_mod
-                            best_phrases.append((score, ' '.join(reference)))
+                            # best_phrases.append((score, ' '.join(reference)))
+                            print "\t%s" % ' '.join(reference)
                             reference[i] = word
 
-        best_phrases.sort(key=lambda phrase: phrase[0], reverse=True)
-        for phrase in best_phrases:
-            print "%f\t%s" % phrase
+        ### TODO: list of responses and scores as output
+        ### Outputs an empty list at most 50% of the time
+        ### Friday: go through 100 images, choose best phrases from the
+        ### three algorithms and score them for each image
+        ### Normalize each scoring function to be on same range and
+        ### distribution
+
+        ### BOT: given a picture, runs it through each scoring function
+        ### and normalizes; if the score is higher than a threshold then
+        ### comment
+        # best_phrases.sort(key=lambda phrase: phrase[0], reverse=True)
+        # for phrase in best_phrases:
+        #     print "%f\t%s" % phrase
 
 
 if __name__ == "__main__":
@@ -160,12 +171,21 @@ if __name__ == "__main__":
     # Optimal parameters found by experimentation
     for m, p in [("edit", 1), ("soundex", 0)]:
         print "Metric: %s-%d" % (m, p)
+        ### TODO: Based on many images come up with ~5 quantities that may
+        ### matter, score phrases, and then do regression
+        ###
+        ### e.g. for each example we generate we get average similarity between
+        ### phrase and tags, similarity on how they look, how they are
+        ### pronounced, etc. and manually give each phrase a score.
+        ### Run logistic regression.
+        ### If not enough samples then instead of regression just do
+        ### heuristic.
         # trainer.run_references("5f7g0l", metric=m, param=p)
         # trainer.run_references("4aozus", metric=m, param=p)
         # trainer.run_references("4qxqnq", metric=m, param=p)
         # trainer.run_references("5f62i1", metric=m, param=p)
-        trainer.run_references("5f7g0l", metric=m, param=p)
-        # trainer.run_references("5fbr5s", metric=m, param=p)
+        # trainer.run_references("5f7g0l", metric=m, param=p)
+        trainer.run_references("5fbr5s", metric=m, param=p)
         # trainer.run_references("5fbigs", metric=m, param=p)
         # trainer.run_references("5fdi09", metric=m, param=p)
         print

@@ -6,16 +6,10 @@ import re
 import config
 import words
 from wrappers import clarifai, reddit
-<<<<<<< HEAD
 from trainer import populateFunny, populateSynonyms, populateRhyme, \
                     getSimilarity, getHomophones, editDistance, \
                     soundexDistance, pronunciationSimilarity, \
                     referencesScore, referencesPrint
-=======
-from trainer import populateFunny, populateSynonyms, populateRhyme, getSimilarity, \
-                    getHomophones, editDistance, soundexDistance, getClassyImage, \
-                    getClassyPhrase
->>>>>>> 1955515d5b1d5b80bdac000afd56f38aca58ae43
 
 
 class Trainer(object):
@@ -174,8 +168,6 @@ if __name__ == "__main__":
     #print trainer.run_synRhyme("4qxqnq")
 
     # Optimal parameters found by experimentation
-    '''
-    print "Metric: %s-%d" % (m, p)
     ### TODO: Based on many images come up with ~5 quantities that may
     ### matter, score phrases, and then do regression
     ###
@@ -185,7 +177,7 @@ if __name__ == "__main__":
     ### Run logistic regression.
     ### If not enough samples then instead of regression just do
     ### heuristic.
-    # trainer.run_references("5f7g0l")
+    trainer.run_references("5f7g0l")
     # trainer.run_references("4aozus")
     # trainer.run_references("4qxqnq")
     # trainer.run_references("5f62i1")
@@ -194,8 +186,8 @@ if __name__ == "__main__":
     # trainer.run_references("5fbigs")
     # trainer.run_references("5fdi09")
     print
-    '''
 
+    '''
     f = open("examples/calibration.txt")
     for line in f.readlines():
         print "\n" + line
@@ -205,6 +197,7 @@ if __name__ == "__main__":
         print trainer.run_references(line)
         print "\nClassy"
         print trainer.run_classy(line)
+    '''
 
 
     # res = trainer.run_classy("1h7o7f")

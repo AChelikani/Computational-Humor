@@ -98,6 +98,7 @@ class Trainer(object):
                         res.append((score, hphone + " " + title_word))
 
         return sorted(res, reverse=True)[0][1]
+        # return sorted(res, reverse=True)
 
     def run_references(self, postID, metric="edit", param=2):
         '''
@@ -169,6 +170,7 @@ if __name__ == "__main__":
     #print trainer.run_synRhyme("4qxqnq")
 
     # Optimal parameters found by experimentation
+    '''
     for m, p in [("edit", 1), ("soundex", 0)]:
         print "Metric: %s-%d" % (m, p)
         ### TODO: Based on many images come up with ~5 quantities that may
@@ -184,15 +186,15 @@ if __name__ == "__main__":
         # trainer.run_references("4aozus", metric=m, param=p)
         # trainer.run_references("4qxqnq", metric=m, param=p)
         # trainer.run_references("5f62i1", metric=m, param=p)
-        # trainer.run_references("5f7g0l", metric=m, param=p)
-        trainer.run_references("5fbr5s", metric=m, param=p)
+        #trainer.run_references("5f7g0l", metric=m, param=p)
+        # trainer.run_references("5fbr5s", metric=m, param=p)
         # trainer.run_references("5fbigs", metric=m, param=p)
         # trainer.run_references("5fdi09", metric=m, param=p)
         print
+    '''
 
-    #res = trainer.run_homophones("5f62i1")
-    #res = trainer.run_homophones("5f7g0l")
-    #print res
+    res = trainer.run_homophones("5fkx9p")
+    print res
     # print "-----ordered------"
     # for item in res:
     #     print item

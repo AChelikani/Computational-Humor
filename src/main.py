@@ -7,7 +7,8 @@ import config
 import words
 from wrappers import clarifai, reddit
 from trainer import populateFunny, populateSynonyms, populateRhyme, getSimilarity, \
-                    getHomophones, editDistance, soundexDistance
+                    getHomophones, editDistance, soundexDistance, getClassyImage, \
+                    getClassyPhrase
 
 
 class Trainer(object):
@@ -21,6 +22,8 @@ class Trainer(object):
         self.populateRhyme = populateRhyme
         self.getSimilarity = getSimilarity
         self.getHomophones = getHomophones
+        self.getClassyImage = getClassyImage
+        self.getClassyPhrase = getClassyPhrase
 
         self.clarifai = clarifai.Clarifai(config.CLARIFAI_AUTH)
         self.reddit = reddit.Reddit("Computation Humor 1.0")
@@ -163,6 +166,15 @@ class Trainer(object):
         # for phrase in best_phrases:
         #     print "%f\t%s" % phrase
 
+    def run_classy(self, postID):
+        comments, imgUrl, votes = self.reddit.getCommentsById(postID)
+
+        tags = self.clarifai.makeRequest(imgUrl)
+        synTags = self.populateSynonyms(tags) - words.COMMON_WORDS
+        classy = self.getClassyImage(synTags)
+        print classy
+        return self.getClassyPhrase(classy)
+
 
 if __name__ == "__main__":
     trainer = Trainer()
@@ -193,8 +205,19 @@ if __name__ == "__main__":
         print
     '''
 
-    res = trainer.run_homophones("5fkx9p")
-    print res
+    f = open("examples/calibration.txt")
+    for line in f.readlines():
+        print "\n" + line
+        print "Homophones"
+        print trainer.run_homophones(line)
+        print "\nReferences"
+        print trainer.run_references(line)
+        print "\nClassy"
+        print trainer.run_classy(line)
+
+
+    # res = trainer.run_classy("1h7o7f")
+    # print res
     # print "-----ordered------"
     # for item in res:
     #     print item

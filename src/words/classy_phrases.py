@@ -1,0 +1,30 @@
+CLASSY_PHRASES = set([
+    "Indeed",
+    "I concur",
+    "It is known",
+    "C'est la vie",
+    "Pardon me",
+    "You deserve a top chef award",
+    "This is the most delicious thing I've seen",
+    "Tasty",
+    "Send recipe plz",
+    "Can I get it to go?",
+    "Add some salad and you've really got something",
+    "Quite amazing, really",
+    "It takes special talent to make something like this"])
+
+NONCLASSY_PHRASES = set([
+    "What a load of garbage",
+    "Hopefully it smells better than it looks",
+    "This makes me retch",
+    "My dog cooks better than this",
+    "Dogfood",
+    "Disgusting",
+    "If you remove all the food you probably have shit left",
+    "Can I get that with poison",
+    "Next time make something real",
+    "I'm pretty sure cavemen ate better looking meals",
+    "Burn this and the recipe",
+    "I''ll pay to see you eat this",
+    "Please, no more",
+    "I can't look"])

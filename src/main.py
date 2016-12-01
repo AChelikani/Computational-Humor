@@ -6,10 +6,16 @@ import re
 import config
 import words
 from wrappers import clarifai, reddit
+<<<<<<< HEAD
 from trainer import populateFunny, populateSynonyms, populateRhyme, \
                     getSimilarity, getHomophones, editDistance, \
                     soundexDistance, pronunciationSimilarity, \
                     referencesScore, referencesPrint
+=======
+from trainer import populateFunny, populateSynonyms, populateRhyme, getSimilarity, \
+                    getHomophones, editDistance, soundexDistance, getClassyImage, \
+                    getClassyPhrase
+>>>>>>> 1955515d5b1d5b80bdac000afd56f38aca58ae43
 
 
 class Trainer(object):
@@ -23,6 +29,8 @@ class Trainer(object):
         self.populateRhyme = populateRhyme
         self.getSimilarity = getSimilarity
         self.getHomophones = getHomophones
+        self.getClassyImage = getClassyImage
+        self.getClassyPhrase = getClassyPhrase
 
         self.clarifai = clarifai.Clarifai(config.CLARIFAI_AUTH)
         self.reddit = reddit.Reddit("Computation Humor 1.0")
@@ -150,6 +158,15 @@ class Trainer(object):
         ### and normalizes; if the score is higher than a threshold then
         ### comment
 
+    def run_classy(self, postID):
+        comments, imgUrl, votes = self.reddit.getCommentsById(postID)
+
+        tags = self.clarifai.makeRequest(imgUrl)
+        synTags = self.populateSynonyms(tags) - words.COMMON_WORDS
+        classy = self.getClassyImage(synTags)
+        print classy
+        return self.getClassyPhrase(classy)
+
 
 if __name__ == "__main__":
     trainer = Trainer()
@@ -157,6 +174,8 @@ if __name__ == "__main__":
     #print trainer.run_synRhyme("4qxqnq")
 
     # Optimal parameters found by experimentation
+    '''
+    print "Metric: %s-%d" % (m, p)
     ### TODO: Based on many images come up with ~5 quantities that may
     ### matter, score phrases, and then do regression
     ###
@@ -167,7 +186,7 @@ if __name__ == "__main__":
     ### If not enough samples then instead of regression just do
     ### heuristic.
     # trainer.run_references("5f7g0l")
-    trainer.run_references("4aozus")
+    # trainer.run_references("4aozus")
     # trainer.run_references("4qxqnq")
     # trainer.run_references("5f62i1")
     # trainer.run_references("5f7g0l")
@@ -175,8 +194,20 @@ if __name__ == "__main__":
     # trainer.run_references("5fbigs")
     # trainer.run_references("5fdi09")
     print
+    '''
 
-    # res = trainer.run_homophones("5fkx9p")
+    f = open("examples/calibration.txt")
+    for line in f.readlines():
+        print "\n" + line
+        print "Homophones"
+        print trainer.run_homophones(line)
+        print "\nReferences"
+        print trainer.run_references(line)
+        print "\nClassy"
+        print trainer.run_classy(line)
+
+
+    # res = trainer.run_classy("1h7o7f")
     # print res
     # print "-----ordered------"
     # for item in res:

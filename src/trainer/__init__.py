@@ -10,4 +10,8 @@ from trainer_synonyms import *
 from trainer_rhyme import *
 from trainer_homophone import *
 from trainer_metrics import *
+<<<<<<< HEAD
 from trainer_references import *
+=======
+from trainer_word2vec_classy import *
+>>>>>>> 1955515d5b1d5b80bdac000afd56f38aca58ae43

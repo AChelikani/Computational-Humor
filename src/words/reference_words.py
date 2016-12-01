@@ -57,6 +57,8 @@ REFERENCE_WORDS = set([
     "The Shawshank Redemption",
     "The Dark Knight",
     "Pulp Fiction",
+    "Kung Fu Panda",
+    "Mean Girls",
 
     # Popular TV shows
     "Spongebob Squarepants",
@@ -109,5 +111,10 @@ REFERENCE_WORDS = set([
     "Resistance is futile.",
     "The line must be drawn here! This far, no further!",
     "I'm sorry, Dave. I'm afraid I can't do that.",
-    "The needs of the many outweigh the needs of the few or the one."
+    "The needs of the many outweigh the needs of the few or the one.",
+    "I volunteer as tribute!",
+    "That's so fetch!",
+    "Why so serious?",
+    "Wanna know how I got these permanent facial disfigurations?",
+    "Who lives in a pineapple under the sea?",
 ])

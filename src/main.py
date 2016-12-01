@@ -6,8 +6,10 @@ import re
 import config
 import words
 from wrappers import clarifai, reddit
-from trainer import populateFunny, populateSynonyms, populateRhyme, getSimilarity, \
-                    getHomophones, editDistance, soundexDistance
+from trainer import populateFunny, populateSynonyms, populateRhyme, \
+                    getSimilarity, getHomophones, editDistance, \
+                    soundexDistance, pronunciationSimilarity, \
+                    referencesScore, referencesPrint
 
 
 class Trainer(object):
@@ -100,54 +102,42 @@ class Trainer(object):
         return sorted(res, reverse=True)[0][1]
         # return sorted(res, reverse=True)
 
-    def run_references(self, postID, metric="edit", param=2):
+    def run_references(self, postID):
         '''
         Replaces words with references.
         '''
         comments, imgUrl, votes = self.reddit.getCommentsById(postID)
-
         tags = self.clarifai.makeRequest(imgUrl)
         synTags = self.populateSynonyms(tags) - words.COMMON_WORDS
-        funny = self.populateFunny(comments, synTags).union(words.INSULTING_WORDS)
-        synFunny = self.populateSynonyms(funny)
-        synAll = synTags.union(synFunny)
 
-        best_phrases = []
-        for rep in synTags:
-            for phrase in words.REFERENCE_WORDS:
-                reference = phrase.split()
-                rep = rep.lower()
-
+        phrases = []
+        for rep in [tag.lower() for tag in synTags]:
+            for ref in [reference.split() for reference in words.REFERENCE_WORDS]:
                 # For each reference, check whether rep can replace a word in
                 # the reference.
-                for i in range(len(reference)):
-                    word = reference[i]
-                    rep_mod = rep
+                for i, word in enumerate(ref):
+                    # Adds capitalization and punctuation.
+                    rep_mod = rep.title() if word.istitle() else rep
+                    word_bare = word.lower()
+                    if not word[-1].isalpha():
+                        rep_mod += word[-1]
+                        word_bare = word_bare[:-1]
 
-                    # Check that word and rep are not the same, and that word
-                    # is not a common word.
-                    if word not in words.COMMON_WORDS and rep_mod != word.lower():
-                        # Capitalizes rep.
-                        if word.istitle():
-                            rep_mod = rep_mod.title()
-                        # Adds punctuation.
-                        if not word[-1].isalpha():
-                            rep_mod += word[-1]
+                    # Check that word and rep are not the same and that word
+                    # is not a common word, and they are close by some metric.
+                    # Note that these parameters were found by experimentation.
+                    if word not in words.COMMON_WORDS and rep_mod != word \
+                    and (editDistance(rep, word_bare) == 1
+                    or soundexDistance(rep, word_bare) == 0):
+                        ref_copy = ref[:]
+                        ref_copy[i] = rep_mod
+                        phrase = ' '.join(ref_copy)
 
-                        # Use a metric as a measure of "closeness" to replace
-                        # a word in a reference.
+                        scores = referencesScore(rep, word, tags)
+                        referencesPrint(phrase, scores)
 
-                        if (metric == "edit" and editDistance(rep_mod, word) <= param) \
-                        or (metric == "soundex" and soundexDistance(rep_mod, word) <= param):
-                            ### TODO: Use this for scoring
-                            # score = 0
-                            # for tag in tags:
-                            #     score += self.getSimilarity(rep, tag)
+                        phrases.append((phrase, scores))
 
-                            reference[i] = rep_mod
-                            # best_phrases.append((score, ' '.join(reference)))
-                            print "\t%s" % ' '.join(reference)
-                            reference[i] = word
 
         ### TODO: list of responses and scores as output
         ### Outputs an empty list at most 50% of the time
@@ -159,9 +149,6 @@ class Trainer(object):
         ### BOT: given a picture, runs it through each scoring function
         ### and normalizes; if the score is higher than a threshold then
         ### comment
-        # best_phrases.sort(key=lambda phrase: phrase[0], reverse=True)
-        # for phrase in best_phrases:
-        #     print "%f\t%s" % phrase
 
 
 if __name__ == "__main__":
@@ -170,31 +157,27 @@ if __name__ == "__main__":
     #print trainer.run_synRhyme("4qxqnq")
 
     # Optimal parameters found by experimentation
-    '''
-    for m, p in [("edit", 1), ("soundex", 0)]:
-        print "Metric: %s-%d" % (m, p)
-        ### TODO: Based on many images come up with ~5 quantities that may
-        ### matter, score phrases, and then do regression
-        ###
-        ### e.g. for each example we generate we get average similarity between
-        ### phrase and tags, similarity on how they look, how they are
-        ### pronounced, etc. and manually give each phrase a score.
-        ### Run logistic regression.
-        ### If not enough samples then instead of regression just do
-        ### heuristic.
-        # trainer.run_references("5f7g0l", metric=m, param=p)
-        # trainer.run_references("4aozus", metric=m, param=p)
-        # trainer.run_references("4qxqnq", metric=m, param=p)
-        # trainer.run_references("5f62i1", metric=m, param=p)
-        #trainer.run_references("5f7g0l", metric=m, param=p)
-        # trainer.run_references("5fbr5s", metric=m, param=p)
-        # trainer.run_references("5fbigs", metric=m, param=p)
-        # trainer.run_references("5fdi09", metric=m, param=p)
-        print
-    '''
+    ### TODO: Based on many images come up with ~5 quantities that may
+    ### matter, score phrases, and then do regression
+    ###
+    ### e.g. for each example we generate we get average similarity between
+    ### phrase and tags, similarity on how they look, how they are
+    ### pronounced, etc. and manually give each phrase a score.
+    ### Run logistic regression.
+    ### If not enough samples then instead of regression just do
+    ### heuristic.
+    # trainer.run_references("5f7g0l")
+    trainer.run_references("4aozus")
+    # trainer.run_references("4qxqnq")
+    # trainer.run_references("5f62i1")
+    # trainer.run_references("5f7g0l")
+    # trainer.run_references("5fbr5s")
+    # trainer.run_references("5fbigs")
+    # trainer.run_references("5fdi09")
+    print
 
-    res = trainer.run_homophones("5fkx9p")
-    print res
+    # res = trainer.run_homophones("5fkx9p")
+    # print res
     # print "-----ordered------"
     # for item in res:
     #     print item

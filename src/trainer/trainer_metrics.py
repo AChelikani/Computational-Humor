@@ -1,3 +1,5 @@
+import pronouncing
+
 def editDistance(str1, str2):
     '''
     Uses Wagner-Fischer algorithm to find the edit distance between two strings.
@@ -77,3 +79,18 @@ def soundexDistance(str1, str2):
     Finds the edit distance of the Soundex codes of two strings.
     '''
     return editDistance(__soundex(str1), __soundex(str2))
+
+def pronunciationSimilarity(str1, str2):
+    '''
+    Finds the edit distance of the phones of two strings.
+    '''
+    try:
+        pronunciation1 = pronouncing.phones_for_word(str1.lower())
+        pronunciation2 = pronouncing.phones_for_word(str2.lower())
+
+        phones1 = pronunciation1[0].split()
+        phones2 = pronunciation2[0].split()
+        
+        return editDistance(phones1, phones2) / float(max(len(phones1), len(phones2)))
+    except:
+        return 1

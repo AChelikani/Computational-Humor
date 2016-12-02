@@ -1,0 +1,7 @@
+Notes on references algorithm:
+- An extra feature indicating similarity between the reference phrase and the image tags should be included.
+- More reference phrases should be added.
+- <synFunny + synTags> should be used, as opposed to <synTags>, for a larger pool of words. Alternatively, only <tags> should be used for a more relevant pool of words.
+- Sentence structure / part-of-speech tagging should be used to test whether the sentence makes sense.
+- Check whether a replacement tag is just a pluralized version of the word in the reference phrase.
+- More examples should be used to train the model (although this may be infeasible due to the amount of labour it requires).

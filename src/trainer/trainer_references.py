@@ -1,44 +1,76 @@
+import os
 import textwrap
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.externals import joblib
 from trainer_metrics import *
 from trainer_synonyms import *
 
 def referencesScore(rep, word, tags):
     '''
     Add results of the following scoring functions:
-      1) Edit distance between <word> and <rep> of spelling
-      2) Edit distance between <word> and <rep> of soundex
-      3) Similarity of <rep> with all words in <tags>
-      4) Length of <rep>
-      5) Pronunciation similarity between <rep> and <word>
+        1) Relative edit distance between <word> and <rep>
+        2) Edit distance between soundex codes <word> and <rep>
+        3) Pronunciation similarity between <rep> and <word>
+        4) Similarity of <rep> with <tags>
+        5) Length of <rep>
     '''
     scores = []
-    scores.append(editDistance(rep, word))
+    scores.append(editSimilarity(rep, word))
     scores.append(soundexDistance(rep, word))
+    scores.append(pronunciationSimilarity(rep, word))
     scores.append(0)
     for tag in tags:
         scores[-1] += getSimilarity(rep, tag)
     scores.append(len(rep))
-    scores.append(pronunciationSimilarity(rep, word))
     return scores
 
-def referencesPrint(phrase, scores):
+def referencesData():
     '''
-    Print generated phrase and list of scores.
+    Extracts data to train model for run_references().
     '''
-    phrase_text = textwrap.wrap(phrase, 40)
+    X = []
+    Y = []
 
-    for i, text in enumerate(phrase_text):
-        if i != len(phrase_text) - 1:
-            print text
-    print ("%-45s" % text),
+    for datafile in os.listdir("../examples/ref_outputs"):
+        f = open("../examples/ref_outputs/" + datafile)
+        while True:
+            comment = f.readline()
+            if comment == "DONE\n":
+                break
 
-    scores_text = "["
-    for score in scores:
-        # Jank but whatever
-        if score < 10:
-            scores_text += "%4.2f, " % score
-        else:
-            scores_text += "%4.1g, " % score
-    scores_text = scores_text[:-2]
-    scores_text += "]"
-    print scores_text
+            scores = f.readline()[1:-2].split(", ")
+            x = [float(score) if score[-3:] != "inf" else -1. for score in scores]
+            X.append(x)
+
+            y = float(f.readline()[:-1])
+            Y.append(y)
+
+    data = train_test_split(X, Y)
+
+    return data
+
+def referencesTrain():
+    '''
+    Trains logistic regression model to be used by run_references() and
+    saves it.
+    '''
+    X_train, X_test, Y_train, Y_test = referencesData()
+
+    clf = LinearRegression()
+    clf.fit(X_train, Y_train)
+
+    results = open("references_model/log.txt", 'w')
+    print >> results, "X_train"
+    print >> results, X_train
+    print >> results, "Y_train"
+    print >> results, Y_train
+    print >> results, "X_test"
+    print >> results, X_test
+    print >> results, "Y_test"
+    print >> results, Y_test
+    print >> results, "Score"
+    print >> results, clf.score(X_test, Y_test)
+
+    joblib.dump(clf, 'references_model/model.pkl') 

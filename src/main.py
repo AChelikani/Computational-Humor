@@ -4,12 +4,13 @@ sys.dont_write_bytecode = True
 
 import re
 import config
+from sklearn.externals import joblib
 import words
 from wrappers import clarifai, reddit
 from trainer import populateFunny, populateSynonyms, populateRhyme, \
                     getSimilarity, getHomophones, editDistance, \
-                    soundexDistance, pronunciationSimilarity, \
-                    referencesScore, referencesPrint
+                    soundexDistance, pronunciationSimilarity, wordEquality, \
+                    referencesScore
 
 
 class Trainer(object):
@@ -23,8 +24,8 @@ class Trainer(object):
         self.populateRhyme = populateRhyme
         self.getSimilarity = getSimilarity
         self.getHomophones = getHomophones
-        self.getClassyImage = getClassyImage
-        self.getClassyPhrase = getClassyPhrase
+        # self.getClassyImage = getClassyImage
+        # self.getClassyPhrase = getClassyPhrase
 
         self.clarifai = clarifai.Clarifai(config.CLARIFAI_AUTH)
         self.reddit = reddit.Reddit("Computation Humor 1.0")
@@ -104,7 +105,7 @@ class Trainer(object):
         return sorted(res, reverse=True)[0][1]
         # return sorted(res, reverse=True)
 
-    def run_references(self, postID):
+    def run_references(self, postID, print_output=False):
         '''
         Replaces words with references.
         '''
@@ -112,46 +113,53 @@ class Trainer(object):
         tags = self.clarifai.makeRequest(imgUrl)
         synTags = self.populateSynonyms(tags) - words.COMMON_WORDS
 
-        phrases = []
-        for rep in [tag.lower() for tag in synTags]:
-            for ref in [reference.split() for reference in words.REFERENCE_WORDS]:
-                # For each reference, check whether rep can replace a word in
+        synTagsLower = [tag.lower() for tag in synTags]
+        referencesSplit = [reference.split() for reference in words.REFERENCE_WORDS]
+
+        comments = []
+        for rep in synTagsLower:
+            for ref in referencesSplit:
+                # For each reference, check whether <rep> can replace a word in
                 # the reference.
-                for i, word in enumerate(ref):
+                for i, word_mod in enumerate(ref):
                     # Adds capitalization and punctuation.
-                    rep_mod = rep.title() if word.istitle() else rep
-                    word_bare = word.lower()
-                    if not word[-1].isalpha():
-                        rep_mod += word[-1]
-                        word_bare = word_bare[:-1]
+                    word = word_mod.lower()
+
+                    rep_mod = rep.title() if word_mod.istitle() else rep
+                    if not word_mod[-1].isalpha():
+                        rep_mod += word_mod[-1]
+                        word = word[:-1]
 
                     # Check that word and rep are not the same and that word
                     # is not a common word, and they are close by some metric.
                     # Note that these parameters were found by experimentation.
-                    if word not in words.COMMON_WORDS and rep_mod != word \
-                    and (editDistance(rep, word_bare) == 1
-                    or soundexDistance(rep, word_bare) == 0):
+                    if word not in words.COMMON_WORDS and not wordEquality(rep, word) \
+                    and (editDistance(rep, word) == 1 or soundexDistance(rep, word) == 0):
                         ref_copy = ref[:]
                         ref_copy[i] = rep_mod
                         phrase = ' '.join(ref_copy)
 
                         scores = referencesScore(rep, word, tags)
-                        referencesPrint(phrase, scores)
+                        if print_output:
+                            print phrase
+                            print scores
+                            print
 
-                        phrases.append((phrase, scores))
+                        comments.append([phrase, scores])
+
+        if print_output:
+            print "DONE"
+
+        clf = joblib.load("trainer/references_model/model.pkl")
+        for comment in comments:
+            comment.extend(clf.predict([comment[1]]))
+
+        comments.sort(key=lambda comment: comment[2])
+        return comments[0][0], comments[0][2]
 
 
-        ### TODO: list of responses and scores as output
-        ### Outputs an empty list at most 50% of the time
-        ### Friday: go through 100 images, choose best phrases from the
-        ### three algorithms and score them for each image
-        ### Normalize each scoring function to be on same range and
-        ### distribution
 
-        ### BOT: given a picture, runs it through each scoring function
-        ### and normalizes; if the score is higher than a threshold then
-        ### comment
-
+    '''
     def run_classy(self, postID):
         comments, imgUrl, votes = self.reddit.getCommentsById(postID)
 
@@ -160,6 +168,7 @@ class Trainer(object):
         classy = self.getClassyImage(synTags)
         print classy
         return self.getClassyPhrase(classy)
+    '''
 
 
 if __name__ == "__main__":
@@ -167,25 +176,16 @@ if __name__ == "__main__":
     #print trainer.run_synRhyme("4aozus")
     #print trainer.run_synRhyme("4qxqnq")
 
-    # Optimal parameters found by experimentation
-    ### TODO: Based on many images come up with ~5 quantities that may
-    ### matter, score phrases, and then do regression
-    ###
-    ### e.g. for each example we generate we get average similarity between
-    ### phrase and tags, similarity on how they look, how they are
-    ### pronounced, etc. and manually give each phrase a score.
-    ### Run logistic regression.
-    ### If not enough samples then instead of regression just do
-    ### heuristic.
-    trainer.run_references("5f7g0l")
-    # trainer.run_references("4aozus")
-    # trainer.run_references("4qxqnq")
-    # trainer.run_references("5f62i1")
-    # trainer.run_references("5f7g0l")
-    # trainer.run_references("5fbr5s")
-    # trainer.run_references("5fbigs")
-    # trainer.run_references("5fdi09")
-    print
+    # f_ref = open("examples/ref_examples.txt")
+    # for line in f_ref:
+    #     if line[0] == "#":
+    #         continue
+    #     f_output = open("examples/ref_outputs/%s" % line[:-1], 'w')
+    #     sys.stdout = f_output
+    #     trainer.run_references(line)
+    #     f_output.close()
+    # f_ref.close()
+    print trainer.run_references("4qxqnq")
 
     '''
     f = open("examples/calibration.txt")

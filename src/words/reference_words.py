@@ -117,4 +117,8 @@ REFERENCE_WORDS = set([
     "Why so serious?",
     "Wanna know how I got these permanent facial disfigurations?",
     "Who lives in a pineapple under the sea?",
+    "Hasta la vista, baby",
+    "Help me, Obi-Wan Kenobi. You're my only hope.",
+    "That'll do, pig, that'll do",
+    "They call it a Royale with cheese."
 ])

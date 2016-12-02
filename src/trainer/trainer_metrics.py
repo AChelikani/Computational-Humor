@@ -80,9 +80,17 @@ def soundexDistance(str1, str2):
     '''
     return editDistance(__soundex(str1), __soundex(str2))
 
+def editSimilarity(str1, str2):
+    '''
+    Finds the relative edit distance between two strings.
+    '''
+    dist = editDistance(str1, str2)
+    scale = max(len(str1), len(str2))
+    return float(dist) / scale
+
 def pronunciationSimilarity(str1, str2):
     '''
-    Finds the edit distance of the phones of two strings.
+    Finds the relative edit distance of the phones of two strings.
     '''
     try:
         pronunciation1 = pronouncing.phones_for_word(str1.lower())
@@ -91,6 +99,17 @@ def pronunciationSimilarity(str1, str2):
         phones1 = pronunciation1[0].split()
         phones2 = pronunciation2[0].split()
         
-        return editDistance(phones1, phones2) / float(max(len(phones1), len(phones2)))
+        return editSimilarity(phones1, phones2)
     except:
         return 1
+
+def wordEquality(str1, str2):
+    '''
+    Determines whether two words are the same.
+    '''
+    str1 = str1.lower()
+    str2 = str2.lower()
+
+    return str1 == str2 \
+           or (str1 == str2 + 'd' or str1 == str2 + 's') \
+           or (str2 == str1 + 'd' or str2 == str1 + 's')

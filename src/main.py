@@ -211,32 +211,27 @@ if __name__ == "__main__":
     for line in f.readlines():
         print "\n" + line
         post = line.strip()
-        x = []
+        x = [None, None, None]
 
         print "Homophones"
-        while True:
-            try:
-                score, homophone = trainer.run_homophones(post)
-                x.append([homophone, score])
-                break
-            except:
-                pass
+        try:
+            score, homophone = trainer.run_homophones(post)
+            x[0] = [homophone, score]
+        except:
+            pass
 
 
         print "\nReferences"
-        while True:
-            try:
-                reference, score = trainer.run_references(post)
-                x.append([reference, score])
-                break
-            except:
-                pass
+        try:
+            reference, score = trainer.run_references(post)
+            x[1] = [reference, score]
+        except:
+            pass
 
         print "\nClassy"
         classy, score = trainer.run_classy(post)
-        x.append([classy, score])
+        x[2] = [classy, score]
         posts.append([post, x])
-        import pdb; pdb.set_trace()
 
 
     # res = trainer.run_classy("1h7o7f")

@@ -21,6 +21,7 @@ class Reddit(object):
     def __init__(self, userAgent):
         self.userAgent = userAgent
         self.connected = False
+        self.loggedIn = False
 
     def connect(self):
         '''
@@ -28,6 +29,23 @@ class Reddit(object):
         '''
         self.reddit = praw.Reddit(user_agent=self.userAgent)
         self.connected = True
+
+    def login(self, user, password):
+        '''
+        Logs in to a reddit account.
+        '''
+        self.reddit.login(user, password)
+        self.loggedIn = True
+
+    def postComment(self, comment, postID):
+        '''
+        Post a comment from logged in account, if any.
+        '''
+        submission = self.reddit.get_submission(submission_id=postID)
+        if (self.loggedIn):
+            submission.add_comment(comment)
+            return True
+        return False
 
     def isConnected(self):
         '''
@@ -124,4 +142,4 @@ if __name__ == "__main__":
 
     reddit = Reddit("Computation Humor 1.0")
     reddit.connect()
-    print reddit.getCommentsById("5a5zmh")
+    print reddit.getCommentsById("5g6zx7")

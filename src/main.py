@@ -25,8 +25,8 @@ class Trainer(object):
         self.populateRhyme = populateRhyme
         self.getSimilarity = getSimilarity
         self.getHomophones = getHomophones
-        # self.getClassyImage = getClassyImage
-        # self.getClassyPhrase = getClassyPhrase
+        self.getClassyImage = getClassyImage
+        self.getClassyPhrase = getClassyPhrase
 
         self.clarifai = clarifai.Clarifai(config.CLARIFAI_AUTH)
         self.reddit = reddit.Reddit("Computation Humor 1.0")
@@ -74,12 +74,10 @@ class Trainer(object):
         title = self.reddit.getPostTitleById(postID)
 
         tags = self.clarifai.makeRequest(imgUrl)
-        print "Tags: done \n"
         regex = re.compile('[^a-zA-Z\s\']')
         title = title.lower()
         title = regex.sub('', title)
         title = title.split(" ")
-        print "Title: done \n"
 
         res = []
 
@@ -204,6 +202,9 @@ if __name__ == "__main__":
     # trainer.run_references("5fbr5s")
     # trainer.run_references("5fbigs")
     # trainer.run_references("5fdi09")
+
+
+    '''
     print
 
     posts = []
@@ -232,7 +233,7 @@ if __name__ == "__main__":
         classy, score = trainer.run_classy(post)
         x[2] = [classy, score]
         posts.append([post, x])
-
+        '''
 
     # res = trainer.run_classy("1h7o7f")
     # print res

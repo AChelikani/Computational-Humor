@@ -1,3 +1,4 @@
+src/config.py
 /config.py
 /*.pyc
 src/trainer/GoogleNews-vectors-negative300.bin

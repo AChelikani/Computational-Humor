@@ -1,6 +1,6 @@
 import gensim
 
-model = gensim.models.Word2Vec.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
+model = gensim.models.Word2Vec.load_word2vec_format('trainer/GoogleNews-vectors-negative300.bin', binary=True)
 
 class Relation:
     def __init__(self, pos, neg=[]):

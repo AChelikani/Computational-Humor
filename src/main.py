@@ -10,7 +10,8 @@ from wrappers import clarifai, reddit
 from trainer import populateFunny, populateSynonyms, populateRhyme, \
                     getSimilarity, getHomophones, editDistance, \
                     soundexDistance, pronunciationSimilarity, \
-                    referencesScore, getClassyImage, getClassyPhrase
+                    referencesScore, getClassyImage, getClassyPhrase, \
+                    wordEquality
 
 
 class Trainer(object):

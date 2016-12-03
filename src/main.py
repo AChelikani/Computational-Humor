@@ -167,7 +167,7 @@ class Trainer(object):
         synTags = self.populateSynonyms(tags) - words.COMMON_WORDS
         classy = self.getClassyImage(synTags)
         print classy
-        return self.getClassyPhrase(classy)
+        return self.getClassyPhrase(classy), classy
 
 
 if __name__ == "__main__":

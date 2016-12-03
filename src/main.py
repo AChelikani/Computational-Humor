@@ -9,8 +9,8 @@ import words
 from wrappers import clarifai, reddit
 from trainer import populateFunny, populateSynonyms, populateRhyme, \
                     getSimilarity, getHomophones, editDistance, \
-                    soundexDistance, pronunciationSimilarity, wordEquality, \
-                    referencesScore
+                    soundexDistance, pronunciationSimilarity, \
+                    referencesScore, getClassyImage, getClassyPhrase
 
 
 class Trainer(object):
@@ -102,7 +102,7 @@ class Trainer(object):
                         #print "%s %s \t score: %f, %f" % (hphone, title_word, score, hscore)
                         res.append((score, hphone + " " + title_word))
 
-        return sorted(res, reverse=True)[0][1]
+        return sorted(res, reverse=True)[0]
         # return sorted(res, reverse=True)
 
     def run_references(self, postID, print_output=False):
@@ -159,7 +159,6 @@ class Trainer(object):
 
 
 
-    '''
     def run_classy(self, postID):
         comments, imgUrl, votes = self.reddit.getCommentsById(postID)
 
@@ -168,7 +167,6 @@ class Trainer(object):
         classy = self.getClassyImage(synTags)
         print classy
         return self.getClassyPhrase(classy)
-    '''
 
 
 if __name__ == "__main__":
@@ -187,17 +185,57 @@ if __name__ == "__main__":
     # f_ref.close()
     print trainer.run_references("4qxqnq")
 
-    '''
+    # Optimal parameters found by experimentation
+    ### TODO: Based on many images come up with ~5 quantities that may
+    ### matter, score phrases, and then do regression
+    ###
+    ### e.g. for each example we generate we get average similarity between
+    ### phrase and tags, similarity on how they look, how they are
+    ### pronounced, etc. and manually give each phrase a score.
+    ### Run logistic regression.
+    ### If not enough samples then instead of regression just do
+    ### heuristic.
+    # trainer.run_references("5f7g0l")
+    # trainer.run_references("4aozus")
+    # trainer.run_references("4qxqnq")
+    # trainer.run_references("5f62i1")
+    # trainer.run_references("5f7g0l")
+    # trainer.run_references("5fbr5s")
+    # trainer.run_references("5fbigs")
+    # trainer.run_references("5fdi09")
+    print
+
+    posts = []
     f = open("examples/calibration.txt")
     for line in f.readlines():
         print "\n" + line
+        post = line.strip()
+        x = []
+
         print "Homophones"
-        print trainer.run_homophones(line)
+        while True:
+            try:
+                score, homophone = trainer.run_homophones(post)
+                x.append([homophone, score])
+                break
+            except:
+                pass
+
+
         print "\nReferences"
-        print trainer.run_references(line)
+        while True:
+            try:
+                reference, score = trainer.run_references(post)
+                x.append([reference, score])
+                break
+            except:
+                pass
+
         print "\nClassy"
-        print trainer.run_classy(line)
-    '''
+        classy, score = trainer.run_classy(post)
+        x.append([classy, score])
+        posts.append([post, x])
+        import pdb; pdb.set_trace()
 
 
     # res = trainer.run_classy("1h7o7f")

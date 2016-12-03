@@ -11,4 +11,4 @@ from trainer_rhyme import *
 from trainer_homophone import *
 from trainer_metrics import *
 from trainer_references import *
-# from trainer_word2vec_classy import *
+from trainer_word2vec_classy import *

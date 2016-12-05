@@ -170,73 +170,7 @@ class Trainer(object):
 
 if __name__ == "__main__":
     trainer = Trainer()
+    ### Uncomment one of the following lines to use one of the three algorithms.
     #print trainer.run_synRhyme("4aozus")
-    #print trainer.run_synRhyme("4qxqnq")
-
-    # f_ref = open("examples/ref_examples.txt")
-    # for line in f_ref:
-    #     if line[0] == "#":
-    #         continue
-    #     f_output = open("examples/ref_outputs/%s" % line[:-1], 'w')
-    #     sys.stdout = f_output
-    #     trainer.run_references(line)
-    #     f_output.close()
-    # f_ref.close()
-    print trainer.run_references("4qxqnq")
-
-    # Optimal parameters found by experimentation
-    ### TODO: Based on many images come up with ~5 quantities that may
-    ### matter, score phrases, and then do regression
-    ###
-    ### e.g. for each example we generate we get average similarity between
-    ### phrase and tags, similarity on how they look, how they are
-    ### pronounced, etc. and manually give each phrase a score.
-    ### Run logistic regression.
-    ### If not enough samples then instead of regression just do
-    ### heuristic.
-    # trainer.run_references("5f7g0l")
-    # trainer.run_references("4aozus")
-    # trainer.run_references("4qxqnq")
-    # trainer.run_references("5f62i1")
-    # trainer.run_references("5f7g0l")
-    # trainer.run_references("5fbr5s")
-    # trainer.run_references("5fbigs")
-    # trainer.run_references("5fdi09")
-
-
-    '''
-    print
-
-    posts = []
-    f = open("examples/calibration.txt")
-    for line in f.readlines():
-        print "\n" + line
-        post = line.strip()
-        x = [None, None, None]
-
-        print "Homophones"
-        try:
-            score, homophone = trainer.run_homophones(post)
-            x[0] = [homophone, score]
-        except:
-            pass
-
-
-        print "\nReferences"
-        try:
-            reference, score = trainer.run_references(post)
-            x[1] = [reference, score]
-        except:
-            pass
-
-        print "\nClassy"
-        classy, score = trainer.run_classy(post)
-        x[2] = [classy, score]
-        posts.append([post, x])
-        '''
-
-    # res = trainer.run_classy("1h7o7f")
-    # print res
-    # print "-----ordered------"
-    # for item in res:
-    #     print item
+    #print trainer.run_references("4qxqnq")
+    #print trainer.run_classy("1h7o7f")
